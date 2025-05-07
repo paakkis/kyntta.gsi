@@ -1,0 +1,22 @@
+{
+  "name": "kyntta.gsi",
+  "version": "1.0.0",
+  "description": "Game State Integration for CS2",
+  "main": "gsi.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "kyntta.gsi"
+  },
+  "keywords": [
+    "GSI",
+    "Gamestate",
+    "integration",
+    "CS2"
+  ],
+  "author": "paakkis",
+  "license": "ISC"
+}
