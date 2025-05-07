@@ -1,6 +1,6 @@
 import * as http from 'http';
 import TelegramBot from './Bot.js';
-
+import MessageHandler from './MessageHandler.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -10,20 +10,10 @@ const host = process.env.HOST || "127.0.0.1";
 const LONG_CD = 120000;
 const SHORT_CD = 60000;
 
-function isOnCoolDown(cooldowns, key, ms) {
-    const now = Date.now();
-    if (!cooldowns.has(key) || now - cooldowns.get(key) > ms) {
-        cooldowns.set(key, now);
-        return false;
-    }
-    return true;
-}
+const messageHandler = new MessageHandler();
 
 const server = http.createServer(function(req, res) {
     const bot = new TelegramBot();
-
-    const triggerLocks = new Set();
-    const cooldowns = new Map();
 
     if (req.method === 'POST') {
         console.log(new Date().toISOString(), '- Handling POST request...');
@@ -50,44 +40,64 @@ const server = http.createServer(function(req, res) {
                 }
 
                 // Game opened
-                const menuKey = `menu_${player.steamid}`
-                if (json?.player?.activity === "menu" && !triggerLocks.has(menuKey)) {
+                const menuKey = `menu_${player.steamid}`;
+                if (json?.player?.activity === "menu" && !messageHandler.isPermanentlyLocked(menuKey)) {
                     await bot.sendMessage("Lets go Leap! 🔥");
-                    triggerLocks.add(menuKey);
+                    messageHandler.setPermanentLock(menuKey);
                 }
 
                 // AWP case
                 const awpKey = `awp_${player.steamid}`;
                 const prevWeapons = previously?.weapons || {};
-                for (const weapon of Object.values(prevWeapons)) {
-                    if (weapon?.name === 'weapon_awp' && !isOnCoolDown(cooldowns, awpKey, LONG_CD)) {
-                        await bot.sendMessage(`${player.name} kävi AWP ostoksilla 🤡`);
-                        triggerLocks.add(awpKey);
-                        break;
+                await messageHandler.withLock(awpKey, async () => {
+                    for (const weapon of Object.values(prevWeapons)) {
+                        if (weapon?.name === 'weapon_awp' && !messageHandler.isOnCooldown(awpKey, LONG_CD)) {
+                            await bot.sendMessage(`${player.name} kävi AWP ostoksilla 🤡`);
+                            messageHandler.setCooldown(awpKey);
+                            break;
+                        }
                     }
-                }
+                });
 
                 // Lose streak
                 const teamKey = team === 'T' ? 'team_t' : 'team_ct';
                 const lossStreakKey = `loss_${team}`;
                 const consecutiveLosses = map?.[teamKey]?.consecutive_round_losses;
-                if (consecutiveLosses === 5 && !isOnCoolDown(cooldowns, lossStreakKey, SHORT_CD)) {
-                    await bot.sendMessage('Nytkö ne sulaa... 📉');
-                }
+                await messageHandler.withLock(lossStreakKey, async () => {
+                    if (consecutiveLosses === 5 && !messageHandler.isOnCooldown(lossStreakKey, SHORT_CD)) {
+                        await bot.sendMessage(`Nytkö ne sulaa... ${consecutiveLosses} putkeen 📉`);
+                        messageHandler.setCooldown(lossStreakKey);
+                    }
+                });
+
+                // Win streak
+                const opponentKey = team === 'T' ? 'team_ct' : 'team_t';
+                const opponentLosses = map?.[opponentKey]?.consecutive_round_losses;
+                const winStreakKey = `winstreak_${team}_${opponentLosses}`;
+                await messageHandler.withLock(winStreakKey, async () => {
+                    if (opponentLosses >= 3 && !messageHandler.isPermanentlyLocked(winStreakKey)) {
+                        await bot.sendMessage(`${team} on putkessa! ${opponentLosses} rundia putkeen 🚀`);
+                        messageHandler.setPermanentLock(winStreakKey);
+                    }
+                });
 
                 // Multi-kill
                 const roundKills = player?.state?.round_kills || 0;
                 const multiKillKey = `killspree_${player.steamid}`;
-                if (roundKills > 3 && !isOnCoolDown(cooldowns, multiKillKey, 20000)) {
-                    await bot.sendMessage(`JA SIELTÄ! ${roundKills} tappoa by ${player.name}!`);
-                }
+                await messageHandler.withLock(multiKillKey, async () => {
+                    if (roundKills > 3 && !messageHandler.isOnCooldown(multiKillKey, 20000)) {
+                        await bot.sendMessage(`JA SIELTÄ! ${roundKills} tappoa by ${player.name}! 🎶`);
+                        messageHandler.setCooldown(multiKillKey);
+                    }
+                });
 
-                // Over 20 kills
+                // Over 20/30 kills
+                const totalKills = matchStats.kills;
                 for (const killMilestone of [20, 30]) {
                     const milestoneKey = `milestone_${killMilestone}_${player.steamid}`;
-                    if (totalKills === killMilestone && !triggerLocks.has(milestoneKey)) {
-                        await bot.sendMessage(`${killMilestone} HÄRKÄÄ by ${player.name}!`);
-                        triggerLocks.add(milestoneKey);
+                    if (totalKills === killMilestone && !messageHandler.isPermanentlyLocked(milestoneKey)) {
+                        await bot.sendMessage(`${killMilestone} HÄRKÄÄ by ${player.name}! 🔫`);
+                        messageHandler.setPermanentLock(milestoneKey);
                     }
                 }
 

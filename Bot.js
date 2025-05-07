@@ -13,6 +13,8 @@ class TelegramBot {
         }
 
         this.apiUrl = `https://api.telegram.org/bot${this.botToken}`;
+
+        this.delay = parseInt(process.env.DELAY || '0');
     }
 
     /**
@@ -26,8 +28,12 @@ class TelegramBot {
             chat_id: this.recipientId,
             text: text,
         };
-
         try {
+            if (this.delay > 0) {
+                console.log(`Adding a delay of ${this.delay} ms to msg`);
+                await new Promise(resolve => setTimeout(resolve, this.delay));
+            }
+
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
