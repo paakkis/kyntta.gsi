@@ -2,7 +2,7 @@ import * as http from 'http';
 import TelegramBot from './Bot.js';
 import MessageHandler from './MessageHandler.js';
 import dotenv from 'dotenv';
-
+import MessageTemplates from './MessageTemplates.js';
 dotenv.config();
 
 const port = process.env.PORT || 3000;
@@ -11,6 +11,7 @@ const LONG_CD = 120000;
 const SHORT_CD = 60000;
 
 const messageHandler = new MessageHandler();
+const messages = new MessageTemplates();
 
 const server = http.createServer(function(req, res) {
     const bot = new TelegramBot();
@@ -52,7 +53,8 @@ const server = http.createServer(function(req, res) {
                 // Connected to map
                 const connKey = `conn_${player.steamdid}_${map.name}`
                 if (map?.name && !messageHandler.isPermanentlyLocked(connKey)) {
-                    await bot.sendMessage(`Seuraavaksi ${map?.name}!`);
+                    const text = messages.getMessage('menu');
+                    await bot.sendMessage(text);
                     messageHandler.setPermanentLock(connKey);
                 }
 

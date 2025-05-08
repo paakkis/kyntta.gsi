@@ -1,0 +1,30 @@
+{
+  "menu": [
+    "Lets go Leap! 🔥",
+    "Time to shine 🌟"
+  ],
+  "awp": [
+    "{player} kävi AWP ostoksilla 🤡",
+    "{player} picked up the big green 💥",
+    "AWP alert! 🎯"
+  ],
+  "killspree": [
+    "JA SIELTÄ! {kills} tappoa by {player}!",
+    "{player} liekeissä! {kills} rundin rypistys!",
+    "Multi by {player} – {kills} tapettua! 🔥"
+  ],
+  "winstreak": [
+    "{team} on putkessa! {rounds} putkeen 🚀",
+    "Juna kulkee! {rounds} voittoa!",
+    "DOMINATION! {rounds} peräkkäin!"
+  ],
+  "lossstreak": [
+    "Nytkö ne sulaa... {rounds} putkeen 📉",
+    "Tiltattu? {rounds} häviötä 😬"
+  ],
+  "milestone": [
+    "{kills} HÄRKÄÄ by {player}! 💪",
+    "{player} just hit {kills} kills! Respect.",
+    "{kills} frags in – beast mode {player}! 🧨"
+  ]
+}
