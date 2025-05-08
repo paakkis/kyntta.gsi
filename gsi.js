@@ -35,15 +35,25 @@ const server = http.createServer(function(req, res) {
                 const map = json.map;
                 const team = player?.team;
 
-                if (!player || !map || !matchStats) {
-                    return res.end(JSON.stringify({ status: 'missing required fields' }));
-                }
-
                 // Game opened
                 const menuKey = `menu_${player.steamid}`;
                 if (json?.player?.activity === "menu" && !messageHandler.isPermanentlyLocked(menuKey)) {
+
+                    console.log("Menu activity detected", { locked: messageHandler.isPermanentlyLocked(menuKey) });
                     await bot.sendMessage("Lets go Leap! 🔥");
                     messageHandler.setPermanentLock(menuKey);
+                }
+
+                if (!map || !matchStats) {
+                    return res.end(JSON.stringify({ status: 'missing required fields for match.' }));
+                }
+
+
+                // Connected to map
+                const connKey = `conn_${player.steamdid}_${map.name}`
+                if (map?.name && !messageHandler.isPermanentlyLocked(connKey)) {
+                    await bot.sendMessage(`Seuraavaksi ${map?.name}!`);
+                    messageHandler.setPermanentLock(connKey);
                 }
 
                 // AWP case
@@ -52,7 +62,7 @@ const server = http.createServer(function(req, res) {
                 await messageHandler.withLock(awpKey, async () => {
                     for (const weapon of Object.values(prevWeapons)) {
                         if (weapon?.name === 'weapon_awp' && !messageHandler.isOnCooldown(awpKey, LONG_CD)) {
-                            await bot.sendMessage(`${player.name} kävi AWP ostoksilla 🤡`);
+                            await bot.sendMessage(`Makseleeko ${player.name}:n bossi? 🤡`);
                             messageHandler.setCooldown(awpKey);
                             break;
                         }
