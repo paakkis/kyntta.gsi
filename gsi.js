@@ -69,7 +69,10 @@ const server = http.createServer(function(req, res) {
                 await messageHandler.withLock(awpKey, async () => {
                     for (const weapon of Object.values(weapons)) {
                         if (weapon?.name === 'weapon_awp' && !messageHandler.isOnCooldown(awpKey, LONG_CD)) {
-                            await bot.sendMessage(`Makseleeko ${player.name}:n bossi? 🤡`);
+                            const text = messages.getMessage('awp', {
+                                player: player?.name,
+                            });
+                            await bot.sendMessage(text);
                             messageHandler.setCooldown(awpKey);
                             break;
                         }
@@ -83,7 +86,10 @@ const server = http.createServer(function(req, res) {
                 const consecutiveLosses = map?.[teamKey]?.consecutive_round_losses;
                 await messageHandler.withLock(lossStreakKey, async () => {
                     if (consecutiveLosses === 5 && !messageHandler.isPermanentlyLocked(lossStreakKey)) {
-                        await bot.sendMessage(`Nytkö ne sulaa... ${consecutiveLosses} putkeen 📉`);
+                        const text = messages.getMessage('lossstreak', {
+                            rounds: consecutiveLosses,
+                        });
+                        await bot.sendMessage(text);
                         messageHandler.setPermanentLock(lossStreakKey);
                     }
                 });
@@ -95,7 +101,11 @@ const server = http.createServer(function(req, res) {
                 const winStreakKey = `winstreak_${team}_${opponentLosses}`;
                 await messageHandler.withLock(winStreakKey, async () => {
                     if (opponentLosses >= 3 && !messageHandler.isPermanentlyLocked(winStreakKey)) {
-                        await bot.sendMessage(`${team} on putkessa! ${opponentLosses} rundia putkeen 🚀`);
+                        const text = messages.getMessage('winstreak', {
+                            team: team,
+                            rounds: consecutiveLosses,
+                        });
+                        await bot.sendMessage(text);
                         messageHandler.setPermanentLock(winStreakKey);
                     }
                 });
@@ -106,7 +116,11 @@ const server = http.createServer(function(req, res) {
 
                 await messageHandler.withLock(multiKillKey, async () => {
                     if (roundKills > 3 && !messageHandler.isPermanentlyLocked(multiKillKey)) {
-                        await bot.sendMessage(`JA SIELTÄ! ${roundKills} tappoa by ${player.name}! 🎶`);
+                        const text = messages.getMessage('milestone', {
+                            player: player?.name,
+                            kills: roundKills,
+                        });
+                        await bot.sendMessage(text);
                         messageHandler.setPermanentLock(multiKillKey);
                     }
                 });
@@ -118,7 +132,11 @@ const server = http.createServer(function(req, res) {
                     const milestoneKey = `milestone_${killMilestone}_${player.steamid}`;
                     await messageHandler.withLock(totalKills, async () => {
                         if (totalKills === killMilestone && !messageHandler.isPermanentlyLocked(milestoneKey)) {
-                            await bot.sendMessage(`${killMilestone} HÄRKÄÄ by ${player.name}! 🔫`);
+                            const text = messages.getMessage('milestone', {
+                                player: player?.name,
+                                kills: killMilestone,
+                            });
+                            await bot.sendMessage(text);
                             messageHandler.setPermanentLock(milestoneKey);
                         }
                     })

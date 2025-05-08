@@ -4,7 +4,7 @@
     "Time to shine 🌟"
   ],
   "map": [
-    "Next up {map}!"
+    "Next up {map}! GLHF"
   ],
   "awp": [
     "{player} kävi AWP ostoksilla 🤡",
@@ -17,17 +17,17 @@
     "Multi by {player} – {kills} tapettua! 🔥"
   ],
   "winstreak": [
-    "{team} on putkessa! {rounds} putkeen 🚀",
+    "{team} on liekeissä! {rounds} voittoa putkeen 🚀",
     "Juna kulkee! {rounds} voittoa!",
     "DOMINATION! {rounds} peräkkäin!"
   ],
   "lossstreak": [
     "Nytkö ne sulaa... {rounds} putkeen 📉",
-    "Tiltattu? {rounds} häviötä 😬"
+    "Tiltattu? {rounds} putkeen...😬"
   ],
   "milestone": [
     "{kills} HÄRKÄÄ by {player}! 💪",
-    "{player} just hit {kills} kills! Respect.",
-    "{kills} frags in – beast mode {player}! 🧨"
+    "{player} just hit {kills} kills!",
+    "{kills} frags in by {player}! 🧨"
   ]
 }
