@@ -18,5 +18,9 @@
     "CS2"
   ],
   "author": "paakkis",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "node-fetch": "^3.3.2"
+  }
 }
