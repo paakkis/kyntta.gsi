@@ -3,6 +3,9 @@
     "Lets go Leap! 🔥",
     "Time to shine 🌟"
   ],
+  "map": [
+    "Next up {map}!"
+  ],
   "awp": [
     "{player} kävi AWP ostoksilla 🤡",
     "{player} picked up the big green 💥",
