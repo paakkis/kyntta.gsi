@@ -7,7 +7,7 @@ dotenv.config();
 
 const port = process.env.PORT || 3000;
 const host = process.env.HOST || "127.0.0.1";
-const LONG_CD = 120000;
+const LONG_CD = 600000;
 const SHORT_CD = 60000;
 
 const messageHandler = new MessageHandler();
