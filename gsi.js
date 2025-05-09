@@ -8,7 +8,6 @@ dotenv.config();
 const port = process.env.PORT || 3000;
 const host = process.env.HOST || "127.0.0.1";
 const LONG_CD = 600000;
-const SHORT_CD = 60000;
 
 const messageHandler = new MessageHandler();
 const messages = new MessageTemplates();
@@ -41,8 +40,8 @@ const server = http.createServer(function(req, res) {
                 const menuKey = `menu_${player.steamid}`;
                 if (json?.player?.activity === "menu" && !messageHandler.isPermanentlyLocked(menuKey)) {
                     const text = messages.getMessage('menu');
-                    await bot.sendMessage(text);
                     messageHandler.setPermanentLock(menuKey);
+                    await bot.sendMessage(text);
                 }
 
                 if (!map || !matchStats) {
@@ -57,8 +56,8 @@ const server = http.createServer(function(req, res) {
                         const text = messages.getMessage('map', {
                             map: map.name,
                         });
-                        await bot.sendMessage(text);
                         messageHandler.setPermanentLock(connKey);
+                        await bot.sendMessage(text);
                     }
                 });
 
@@ -72,8 +71,8 @@ const server = http.createServer(function(req, res) {
                             const text = messages.getMessage('awp', {
                                 player: player?.name,
                             });
-                            await bot.sendMessage(text);
                             messageHandler.setCooldown(awpKey);
+                            await bot.sendMessage(text);
                             break;
                         }
                     }
@@ -89,8 +88,8 @@ const server = http.createServer(function(req, res) {
                         const text = messages.getMessage('lossstreak', {
                             rounds: consecutiveLosses,
                         });
-                        await bot.sendMessage(text);
                         messageHandler.setPermanentLock(lossStreakKey);
+                        await bot.sendMessage(text);
                     }
                 });
 
@@ -105,8 +104,8 @@ const server = http.createServer(function(req, res) {
                             team: team,
                             rounds: consecutiveLosses,
                         });
-                        await bot.sendMessage(text);
                         messageHandler.setPermanentLock(winStreakKey);
+                        await bot.sendMessage(text);
                     }
                 });
 
@@ -120,8 +119,8 @@ const server = http.createServer(function(req, res) {
                             player: player?.name,
                             kills: roundKills,
                         });
-                        await bot.sendMessage(text);
                         messageHandler.setPermanentLock(multiKillKey);
+                        await bot.sendMessage(text);
                     }
                 });
 
@@ -136,8 +135,8 @@ const server = http.createServer(function(req, res) {
                                 player: player?.name,
                                 kills: killMilestone,
                             });
-                            await bot.sendMessage(text);
                             messageHandler.setPermanentLock(milestoneKey);
+                            await bot.sendMessage(text);
                         }
                     })
                 };
@@ -148,12 +147,12 @@ const server = http.createServer(function(req, res) {
 
                 await messageHandler.withLock(totalKills, async () => {
                     if (bomb?.state === "planted" && !messageHandler.isPermanentlyLocked(bombPlantedKey)) {
-                        await bot.sendMessage("Bomb has been planted! 💣");
                         messageHandler.setPermanentLock(bombPlantedKey);
+                        await bot.sendMessage("Bomb has been planted! 💣");
                     }
                     if (bomb?.state === "defused" && json?.previously?.bomb?.countdown < 1.0 && !messageHandler.isPermanentlyLocked(bombDefuseKey)) {
-                        await bot.sendMessage(`Bomb has been defused! Ja vain ${json?.previously?.bomb?.countdown}s jäljellä 😰`)
                         messageHandler.setPermanentLock(bombDefuseKey);
+                        await bot.sendMessage(`Bomb has been defused! Ja vain ${json?.previously?.bomb?.countdown}s jäljellä 😰`)
                     }
                 });
 

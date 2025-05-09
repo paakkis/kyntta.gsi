@@ -15,7 +15,7 @@
   "killspree": [
     "JA SIELTÄ! {kills} tappoa by {player}!",
     "{player} liekeissä! {kills} rundin rypistys!",
-    "Multi by {player} – {kills} tapettua! 🔥"
+    "Multikill by {player} – {kills} tapettua! 🔥"
   ],
   "winstreak": [
     "{team} on liekeissä! {rounds} voittoa putkeen 🚀",
